@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Mitbits
 
 **TODO: Add description**
@@ -19,3 +20,7 @@ Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_do
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
 be found at [https://hexdocs.pm/mitbits](https://hexdocs.pm/mitbits).
 
+=======
+# Mitbits Cryptocurrency
+A implementation of blockchain to create a new cryptocurrency of lower threshold 
+>>>>>>> 56bbe66818f0c77dbcdbca3fcb7c93fa21cbc7ab
