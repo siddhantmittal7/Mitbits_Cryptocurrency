@@ -1,2 +1,2 @@
 # Mitbits Cryptocurrency
-A new implementation of blockchain to create a new cryptocurrency of lower threshold 
+A implementation of blockchain to create a new cryptocurrency of lower threshold 
