@@ -1,14 +1,14 @@
-defmodule Chord.Application do
+defmodule Mitbits.Application do
   use Application
 
-  def start(_type, {numNodes, numRequests}) do
+  def start(_type) do
     children = [
-      Chord.NodeSupervisor,
-      Chord.Stabilize,
-      {Chord.Driver, {numNodes, numRequests, 0}}
+      Mitbits.NodeSupervisor,
+      Mitbits.MinerSupervisor,
+      Mitbits.Driver
     ]
 
-    opts = [strategy: :one_for_all, name: Chord.Supervisor]
+    opts = [strategy: :one_for_all, name: Mitbits.Supervisor]
     Supervisor.start_link(children, opts)
   end
 end

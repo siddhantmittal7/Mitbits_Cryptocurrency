@@ -1,4 +1,4 @@
-defmodule Chord.NodeSupervisor do
+defmodule Mitbits.NodeSupervisor do
   use DynamicSupervisor
   @me NodeSupervisor
   def start_link(_) do
@@ -9,8 +9,8 @@ defmodule Chord.NodeSupervisor do
     DynamicSupervisor.init(strategy: :one_for_one)
   end
 
-  def add_node(node_id, m) do
-    {:ok, _pid} = DynamicSupervisor.start_child(@me, {Chord.Node, {node_id, m}})
-    _pid
+  def add_node(pk, sk) do
+    {:ok, pid} = DynamicSupervisor.start_child(@me, {Mitbits.Node, {pk, sk}})
+    pid
   end
 end
