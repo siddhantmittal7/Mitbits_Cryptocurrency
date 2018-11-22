@@ -3,7 +3,7 @@ defmodule Mitbits.Node do
 
   # API
   def start_link({pk, sk}) do
-    GenServer.start_link(__MODULE__, {pk, sk}, name: :pk)
+    GenServer.start_link(__MODULE__, {pk, sk})
   end
 
   # Server

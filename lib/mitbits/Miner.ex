@@ -4,7 +4,7 @@ defmodule Mitbits.Miner do
 
   # API
   def start_link({pk, sk}) do
-    GenServer.start_link(__MODULE__, {pk, sk}, name: :"miner_#{pk}")
+    GenServer.start_link(__MODULE__, {pk, sk})
   end
 
   def mine_first_block(string) do
@@ -13,22 +13,46 @@ defmodule Mitbits.Miner do
 
   # Server
   def init({pk, sk}) do
+    # IO.inspect pk
+    # IO.inspect sk
+    # IO.inspect(pk, sk)
     {:ok, {pk, sk}}
   end
 
   def handle_cast({:mine_first, string}, {pk, sk}) do
-    IO.puts(string)
-    signature = Mitbits.RSA.sign(string, sk)
+    # IO.puts(string, sk)
+    string = "gjhbsd"
+    IO.inspect(string)
+    # IO.puts(pk)
+    # IO.puts(sk)
+    {:ok, {sk, pk}} = RsaEx.generate_keypair()
 
-    [{_, curr_unchained_txns}] = :ets.lookup(:mitbits, "unchained_txn")
+    signature =
+      RsaEx.sign(
+        string,
+        sk
+      )
 
-    updated_unchained_txns =
-      curr_unchained_txns ++
-        [%{signature: signature, message: string, timestamp: System.system_time()}]
+    IO.inspect(signature)
 
-    :ets.insert(:mitbits, {"unchained_txn", updated_unchained_txns})
+    {:ok, valid} =
+      RsaEx.verify(
+        string,
+        signature,
+        pk
+      )
 
-    mine_first(pk, sk)
+    IO.inspect(valid)
+    # [{_, curr_unchained_txns}] = :ets.lookup(:mitbits, "unchained_txn")
+
+    # updated_unchained_txns =
+    #   curr_unchained_txns ++
+    #     [%{signature: signature, message: string, timestamp: System.system_time()}]
+    #
+    # :ets.insert(:mitbits, {"unchained_txn", updated_unchained_txns})
+    #
+    # mine_first(pk, sk)
+    {:noreply, {pk, sk}}
   end
 
   def mine_first(pk, sk) do

@@ -11,6 +11,5 @@ defmodule Mitbits.MinerSupervisor do
 
   def add_miner(pk, sk) do
     {:ok, pid} = DynamicSupervisor.start_child(@me, {Mitbits.Miner, {pk, sk}})
-    pid
   end
 end

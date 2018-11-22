@@ -10,10 +10,10 @@ defmodule Mitbits.RSA do
         stderr_to_stdout: true
       )
 
-      {:ok, pub} = File.read(publicKey)
-      # IO.inspect pub
+    {:ok, pub} = File.read(publicKey)
+    # IO.inspect pub
     {:ok, priv} = File.read(privateKey)
-# IO.inspect priv
+    # IO.inspect priv
     # Overwrite with random to ensure non-retrieval of keys
     # File.copy("", privateKey, byte_size(priv))
     # File.copy("", publicKey, byte_size(pub))

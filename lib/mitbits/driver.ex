@@ -20,27 +20,36 @@ defmodule Mitbits.Driver do
 
     node_pks =
       Enum.map(1..numNodes, fn node ->
-        {:ok, {sk, pk}} = RsaEx.generate_keypair
-        IO.inspect [pk,sk]
-        {:ok, _} = Mitbits.NodeSupervisor.add_node(pk, sk)
-        pk
+        {:ok, {sk, pk}} = RsaEx.generate_keypair()
+        # IO.inspect([pk, sk])
+        # IO.inspect MapSet.size(set)
+        {:ok, pid} = Mitbits.NodeSupervisor.add_node(pk, sk)
+        # IO.inspect(pid)
+        {pk, pid}
       end)
 
-    IO.inspect(node_pks)
+    # IO.inspect node_pks
+
+    # IO.inspect Enum.count(node_pks)
+    # IO.inspect(node_pks)
 
     miner_pks =
       Enum.map(1..numMiners, fn miner ->
-        {pk, sk} = Mitbits.RSA.getKeypair()
-        _ = Mitbits.MinerSupervisor.add_miner(pk, sk)
-        pk
+        {:ok, {sk, pk}} = RsaEx.generate_keypair()
+        # IO.inspect pk
+        # IO.inspect sk
+        # IO.inspect(pk, sk)
+        {:ok, pid} = Mitbits.MinerSupervisor.add_miner(pk, sk)
+        {pk, pid}
       end)
 
-    :ets.new(:mitbits_unchained_txn, [:set, :public, :named_table])
+    :ets.new(:mitbits, [:set, :public, :named_table])
     :ets.insert(:mitbits, {"unchained_txn", []})
 
-    [first | _] = miner_pks
-    IO.puts("rgd")
-    GenServer.call(:"miner_#{first}", {:mine_first, "the fox jkfsndaljd"})
+    [{first_miner_pk, first_miner_pid} | _] = miner_pks
+    # IO.puts("rgd")
+    GenServer.cast(first_miner_pid, {:mine_first, "the fox jkfsndaljd"})
+    {:noreply, {}}
   end
 
   defp fill_map(node_set, numNodes, max) do
