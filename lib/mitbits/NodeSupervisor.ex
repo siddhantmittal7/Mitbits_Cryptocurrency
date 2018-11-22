@@ -9,7 +9,7 @@ defmodule Mitbits.NodeSupervisor do
     DynamicSupervisor.init(strategy: :one_for_one)
   end
 
-  def add_node(pk, sk) do
-    {:ok, pid} = DynamicSupervisor.start_child(@me, {Mitbits.Node, {pk, sk}})
+  def add_node(pk, sk, genesis_block) do
+    {:ok, pid} = DynamicSupervisor.start_child(@me, {Mitbits.Node, {pk, sk, genesis_block}})
   end
 end
