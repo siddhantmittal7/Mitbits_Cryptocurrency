@@ -17,7 +17,7 @@ defmodule Mitbits.Driver do
   def handle_info(:kickoff, {}) do
     numNodes = 20
     numMiners = 5
-
+    IO.puts "here"
     node_pks =
       Enum.map(1..numNodes, fn node ->
         {:ok, {sk, pk}} = RsaEx.generate_keypair()
@@ -47,7 +47,7 @@ defmodule Mitbits.Driver do
     :ets.insert(:mitbits, {"unchained_txn", []})
 
     [{first_miner_pk, first_miner_pid} | _] = miner_pks
-    # IO.puts("rgd")
+     IO.puts("rgd")
     GenServer.cast(first_miner_pid, {:mine_first, "the fox jkfsndaljd"})
     {:noreply, {}}
   end
