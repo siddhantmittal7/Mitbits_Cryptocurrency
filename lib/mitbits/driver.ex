@@ -20,9 +20,9 @@ defmodule Mitbits.Driver do
 
     node_pks =
       Enum.map(1..numNodes, fn node ->
-        {pk, sk} = Mitbits.RSA.getKeypair()
-        # IO.inspect [pk,sk]
-        _ = Mitbits.NodeSupervisor.add_node(pk, sk)
+        {:ok, {sk, pk}} = RsaEx.generate_keypair
+        IO.inspect [pk,sk]
+        {:ok, _} = Mitbits.NodeSupervisor.add_node(pk, sk)
         pk
       end)
 

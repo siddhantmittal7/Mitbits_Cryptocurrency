@@ -1,4 +1,4 @@
-defmodule Miitbits.Miner do
+defmodule Mitbits.Miner do
   use GenServer, restart: :transient
   @target "0000" <> "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
 

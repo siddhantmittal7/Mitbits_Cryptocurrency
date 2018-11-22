@@ -11,6 +11,5 @@ defmodule Mitbits.NodeSupervisor do
 
   def add_node(pk, sk) do
     {:ok, pid} = DynamicSupervisor.start_child(@me, {Mitbits.Node, {pk, sk}})
-    pid
   end
 end

@@ -1,3 +1,4 @@
 %{
   "krypto": {:hex, :krypto, "0.1.1", "5afd2e19ff7cd16b361673b65d32be1c7c16542ba7f5f413537da44b88f362d4", [:mix], [], "hexpm"},
+  "rsa_ex": {:hex, :rsa_ex, "0.4.0", "e28dd7dc5236e156df434af0e4aa822384c8866c928e17b785d4edb7c253b558", [:mix], [], "hexpm"},
 }
