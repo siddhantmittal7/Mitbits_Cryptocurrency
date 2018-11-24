@@ -9,7 +9,7 @@ defmodule Mitbits.Node do
   end
 
   def get_balance(hash) do
-    GenServer.call(Mitbits.Utility.string_to_atom("node_"<>hash), :get_balance)
+    GenServer.call(Mitbits.Utility.string_to_atom("node_" <> hash), :get_balance)
   end
 
   # Server
@@ -17,12 +17,15 @@ defmodule Mitbits.Node do
     {:ok, {pk, sk, [genesis_block], 0}}
   end
 
-  def handle_call(:get_balance, _from, {pk,sk,blockchain,balance}) do
-    {:reply, balance, {pk,sk,blockchain, balance}}
+  def handle_call(:get_balance, _from, {pk, sk, blockchain, balance}) do
+    {:reply, balance, {pk, sk, blockchain, balance}}
   end
 
   def handle_call(:update_wallet, _from, {pk, sk, blockchain, balance}) do
-    my_name = "node_"<>Mitbits.Utility.getHash(pk)
+    my_name = "node_" <> Mitbits.Utility.getHash(pk)
+
+    # IO.inspect blockchain
+
     balance =
       Enum.reduce(blockchain, 0, fn block, acc ->
         txns = block.txns
@@ -48,17 +51,25 @@ defmodule Mitbits.Node do
         acc + tot_block
       end)
 
+    # IO.puts pk
+    IO.inspect balance
+
     {:reply, {:ok}, {pk, sk, blockchain, balance}}
   end
 
   def handle_call({:buy_bitcoins, miner_node_hash}, _from, {pk, sk, blockchain, balance}) do
-    {:ok} = GenServer.call(Mitbits.Utility.string_to_atom("node_"<>miner_node_hash), {:req_for_mitbits, 10, pk})
+    {:ok} =
+      GenServer.call(
+        Mitbits.Utility.string_to_atom("node_" <> miner_node_hash),
+        {:req_for_mitbits, 10, pk}
+      )
+
     {:reply, {:ok}, {pk, sk, blockchain, balance}}
   end
 
   def handle_call({:req_for_mitbits, amount, req_pk}, _from, {pk, sk, blockchain, balance}) do
     if(balance > amount) do
-      txn_msg = %{amount: amount, from: pk, to: req_pk}
+      txn_msg = %{amount: amount, from: "node_"<>Mitbits.Utility.getHash(pk), to: "node_"<>Mitbits.Utility.getHash(req_pk)}
       str_txn_msg = Mitbits.Utility.txn_msg_to_string(txn_msg)
 
       signature_txn_msg = Mitbits.Utility.sign(str_txn_msg, sk)
@@ -67,12 +78,17 @@ defmodule Mitbits.Node do
 
       {:ok} = Mitbits.Utility.add_txn(txn)
 
-      {:reply, {:ok}, {pk, sk, blockchain, balance-amount}}
+      {:reply, {:ok}, {pk, sk, blockchain, balance - amount}}
     end
   end
 
   def handle_call(:get_prev_block_hash, _from, {pk, sk, blockchain, balance}) do
     latest_block = Enum.at(blockchain, -1)
     {:reply, {latest_block.hash}, {pk, sk, blockchain, balance}}
+  end
+
+  def handle_call({:rec_new_block, new_block}, _from, {pk, sk, blockchain, balance}) do
+    updated_blockchain = blockchain ++ [new_block]
+    {:reply,{:ok}, {pk, sk, updated_blockchain, balance}}
   end
 end

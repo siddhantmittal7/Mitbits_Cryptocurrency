@@ -39,7 +39,7 @@ defmodule Mitbits.Driver do
         {:mine_first, "the fox jkfsndaljd"}
       )
 
-    IO.inspect(genesis_block)
+    # IO.inspect(genesis_block)
 
     miner_node_hash =
       Enum.map(miner_pk_hash_sk, fn {pk, hash_name, sk} ->
@@ -51,9 +51,9 @@ defmodule Mitbits.Driver do
         {hash_name}
       end)
 
-      Enum.each(miner_node_hash, fn {hash} ->
-        IO.inspect Mitbits.Node.get_balance(hash)
-      end)
+    # Enum.each(miner_node_hash, fn {hash} ->
+    #   IO.inspect(Mitbits.Node.get_balance(hash))
+    # end)
 
     node_hash =
       Enum.map(1..numNodes, fn _ ->
@@ -74,12 +74,9 @@ defmodule Mitbits.Driver do
       end)
 
     all_nodes = miner_node_hash ++ node_hash
+    :ets.insert(:mitbits, {"nodes", all_nodes})
 
-    Mitbits.Utility.print_txns()
-
-    Enum.each(miner_node_hash, fn {hash} ->
-      IO.inspect Mitbits.Node.get_balance(hash)
-    end)
+    # Mitbits.Utility.print_txns()
 
     Mitbits.Miner.start_mining(first_miner_hash)
 

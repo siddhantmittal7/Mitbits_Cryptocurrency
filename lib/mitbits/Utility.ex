@@ -29,15 +29,17 @@ defmodule Mitbits.Utility do
   end
 
   def combine(txn_set) do
-    str_txn_set = Enum.reduce(txn_set, "", fn txn, str ->
-      msg = txn.message
-      str_msg = to_string(msg.from) <> to_string(msg.to) <> to_string(msg.amount)
+    str_txn_set =
+      Enum.reduce(txn_set, "", fn txn, str ->
+        msg = txn.message
+        str_msg = to_string(msg.from) <> to_string(msg.to) <> to_string(msg.amount)
 
-      str_signature = txn.signature |> Base.encode16() |> String.downcase()
-      str_timestamp = to_string(txn.timestamp)
-      str_txn = str_msg <> str_signature <> str_timestamp
-      str <> str_txn
-    end)
+        str_signature = txn.signature |> Base.encode16() |> String.downcase()
+        str_timestamp = to_string(txn.timestamp)
+        str_txn = str_msg <> str_signature <> str_timestamp
+        str <> str_txn
+      end)
+
     str_txn_set
   end
 end
