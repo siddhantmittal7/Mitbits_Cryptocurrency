@@ -11,6 +11,11 @@ defmodule Mitbits.Utility do
     signature
   end
 
+  def verify(string, skey) do
+    {:ok, valid} = RsaEx.verify(string, signature, pk)
+    valid
+  end
+
   def txn_msg_to_string(txn_msg) do
     to_string(txn_msg.from) <> to_string(txn_msg.to) <> to_string(txn_msg.amount)
   end
