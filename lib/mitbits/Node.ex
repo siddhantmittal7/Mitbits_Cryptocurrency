@@ -2,8 +2,14 @@ defmodule Mitbits.Node do
   use GenServer, restart: :transient
 
   # API
-  def start_link({pk, sk, genesis_block}) do
-    GenServer.start_link(__MODULE__, {pk, sk, genesis_block})
+  def start_link({pk, sk, genesis_block, hash_name}) do
+    GenServer.start_link(__MODULE__, {pk, sk, genesis_block},
+      name: Mitbits.Utility.string_to_atom("node_" <> hash_name)
+    )
+  end
+
+  def get_balance(hash) do
+    GenServer.call(Mitbits.Utility.string_to_atom("node_"<>hash), :get_balance)
   end
 
   # Server
@@ -11,22 +17,27 @@ defmodule Mitbits.Node do
     {:ok, {pk, sk, [genesis_block], 0}}
   end
 
+  def handle_call(:get_balance, _from, {pk,sk,blockchain,balance}) do
+    {:reply, balance, {pk,sk,blockchain, balance}}
+  end
+
   def handle_call(:update_wallet, _from, {pk, sk, blockchain, balance}) do
+    my_name = "node_"<>Mitbits.Utility.getHash(pk)
     balance =
       Enum.reduce(blockchain, 0, fn block, acc ->
         txns = block.txns
 
         tot_block =
-          Enum.reduce(txns, 1, fn txn, acc ->
+          Enum.reduce(txns, 0, fn txn, acc ->
             if(Kernel.is_map(txn.message) == true) do
               cond do
-                txn.message.from == pk ->
+                txn.message.from == my_name ->
                   acc - txn.message.amount
 
-                txn.message.to == pk ->
+                txn.message.to == my_name ->
                   acc + txn.message.amount
 
-                txn.message.from != pk && txn.message.to != pk ->
+                txn.message.from != my_name && txn.message.to != my_name ->
                   acc
               end
             else
@@ -40,8 +51,8 @@ defmodule Mitbits.Node do
     {:reply, {:ok}, {pk, sk, blockchain, balance}}
   end
 
-  def handle_call({:buy_bitcoins, miner_node_pid}, _from, {pk, sk, blockchain, balance}) do
-    {status} = GenServer.call(miner_node_pid, {:req_for_mitbits, 10, pk})
+  def handle_call({:buy_bitcoins, miner_node_hash}, _from, {pk, sk, blockchain, balance}) do
+    {:ok} = GenServer.call(Mitbits.Utility.string_to_atom("node_"<>miner_node_hash), {:req_for_mitbits, 10, pk})
     {:reply, {:ok}, {pk, sk, blockchain, balance}}
   end
 
@@ -56,9 +67,12 @@ defmodule Mitbits.Node do
 
       {:ok} = Mitbits.Utility.add_txn(txn)
 
-      {:valid}
-    else
-      {:invalid}
+      {:reply, {:ok}, {pk, sk, blockchain, balance-amount}}
     end
+  end
+
+  def handle_call(:get_prev_block_hash, _from, {pk, sk, blockchain, balance}) do
+    latest_block = Enum.at(blockchain, -1)
+    {:reply, {latest_block.hash}, {pk, sk, blockchain, balance}}
   end
 end

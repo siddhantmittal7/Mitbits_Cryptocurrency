@@ -3,8 +3,14 @@ defmodule Mitbits.Miner do
   @target "0000" <> "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
 
   # API
-  def start_link({pk, sk}) do
-    GenServer.start_link(__MODULE__, {pk, sk})
+  def start_link({pk, sk, hash_name}) do
+    GenServer.start_link(__MODULE__, {pk, sk},
+      name: Mitbits.Utility.string_to_atom("miner_" <> hash_name)
+    )
+  end
+
+  def start_mining(hash) do
+    GenServer.cast(Mitbits.Utility.string_to_atom("miner_"<>hash), :mine)
   end
 
   # Server
@@ -26,12 +32,48 @@ defmodule Mitbits.Miner do
     {:reply, {mine_first(pk, sk)}, {pk, sk}}
   end
 
+  def handle_cast(:mine, {pk,sk}) do
+    [{_, curr_unchained_txns}] = :ets.lookup(:mitbits, "unchained_txn")
+
+    sorted_unchained_txns = Enum.sort_by(curr_unchained_txns, fn(txn) -> txn.timestamp end)
+
+    if (Enum.count(sorted_unchained_txns) < 5) do
+      GenServer.cast(@me, {:mine})
+      {:noreply, {pk,sk}}
+    else
+      {txn_set, _} = Enum.split(sorted_unchained_txns, 5)
+      str_txn_set = Mitbits.Utility.combine(txn_set)
+
+      my_hash = Mitbits.Utility.getHash(pk)
+      {prev_block_hash} = GenServer.call(Mitbits.Utility.string_to_atom("node_"<>my_hash), :get_prev_block_hash)
+
+      block_string = str_txn_set <> prev_block_hash
+      nonce = Enum.random(1..100)
+
+      # IO.puts "here"
+
+      new_block_hash = find_block_hash(block_string, nonce)
+
+      IO.inspect new_block_hash
+
+      block = %{hash: new_block_hash, txns: txn_set, previous_hash: prev_block_hash, timestamp: System.system_time()}
+
+      # IO.inspect block
+
+      # Delete txn_set from ets
+      # Send block to all
+
+      {:noreply, {pk,sk}}
+
+    end
+
+
+  end
+
   def mine_first(pk, sk) do
     [{_, curr_unchained_txns}] = :ets.lookup(:mitbits, "unchained_txn")
     :ets.insert(:mitbits, {"unchained_txn", []})
-    sorted_unchained_txns = List.keysort(curr_unchained_txns, 2)
-
-    # i = Enum.count(sorted_unchained_txns)
+    sorted_unchained_txns = Enum.sort_by(curr_unchained_txns, fn(txn) -> txn.timestamp end)
 
     [first_txn | _] = sorted_unchained_txns
     str_signature_of_first_txn = first_txn.signature |> Base.encode16() |> String.downcase()
@@ -39,7 +81,8 @@ defmodule Mitbits.Miner do
     str_first_txn =
       str_signature_of_first_txn <> first_txn.message <> to_string(first_txn.timestamp)
 
-    reward_msg = %{from: pk, to: pk, amount: 50}
+      my_hash = Mitbits.Utility.getHash(pk)
+    reward_msg = %{from: "miner_"<>my_hash, to: "node_"<>my_hash, amount: 1000}
 
     str_reward_msg =
       to_string(reward_msg.from) <> to_string(reward_msg.to) <> to_string(reward_msg.amount)
@@ -60,21 +103,22 @@ defmodule Mitbits.Miner do
 
     nonce = Enum.random(1..100)
 
-    new_block_hash = find_hash_first(hash_of_first_and_reward_txn, nonce)
+    new_block_hash = find_block_hash(hash_of_first_and_reward_txn, nonce)
 
-    block = %{hash: new_block_hash, txns: [first_txn, reward_txn], previous_hash: nil}
+    block = %{hash: new_block_hash, txns: [first_txn, reward_txn], previous_hash: nil, timestamp: System.system_time()}
     block
   end
 
-  def find_hash_first(string, nonce) do
+  def find_block_hash(string, nonce) do
     temp_str = string <> to_string(nonce)
     temp_hash = :crypto.hash(:sha256, temp_str) |> Base.encode16() |> String.downcase()
-    # IO.puts(nonce)
 
     if(temp_hash < @target) do
       temp_hash
     else
-      find_hash_first(string, nonce + 1)
+      find_block_hash(string, nonce + 1)
     end
   end
+
+
 end
