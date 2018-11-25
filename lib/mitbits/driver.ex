@@ -20,59 +20,65 @@ defmodule Mitbits.Driver do
     miners = Map.new()
     nodes = Map.new()
 
-    miner_pk_pid_sk =
+    miner_pk_hash_sk =
       Enum.map(1..numMiners, fn _ ->
         {:ok, {sk, pk}} = RsaEx.generate_keypair()
-        {:ok, pid} = Mitbits.MinerSupervisor.add_miner(pk, sk)
-        {pk, pid, sk}
-      end)
-
-    miner =
-      Enum.reduce(miner_pk_pid_sk, %{}, fn {pk, pid, sk}, miner ->
-        Map.put_new(miner, String.to_atom(pk), {pid, sk})
+        hash_name = Mitbits.Utility.getHash(pk)
+        {:ok, _} = Mitbits.MinerSupervisor.add_miner(pk, sk, hash_name)
+        {pk, hash_name, sk}
       end)
 
     :ets.new(:mitbits, [:set, :public, :named_table])
     :ets.insert(:mitbits, {"unchained_txn", []})
-    :ets.insert(:mitbits, {"miner", miner})
 
-    [{first_miner_pk, first_miner_pid, _} | _] = miner_pk_pid_sk
-    {genesis_block} = GenServer.call(first_miner_pid, {:mine_first, "the fox jkfsndaljd"})
+    [{first_miner_pk, first_miner_hash, _} | _] = miner_pk_hash_sk
 
-    IO.inspect(genesis_block)
+    {genesis_block} =
+      GenServer.call(
+        Mitbits.Utility.string_to_atom("miner_" <> first_miner_hash),
+        {:mine_first, "the fox jkfsndaljd"}
+      )
 
-    miner_node_pk_pid =
-      Enum.map(miner_pk_pid_sk, fn {pk, _, sk} ->
-        {:ok, pid} = Mitbits.NodeSupervisor.add_node(pk, sk, genesis_block)
-        {:ok} = GenServer.call(pid, :update_wallet)
-        {pk, pid}
+    # IO.inspect(genesis_block)
+
+    miner_node_hash =
+      Enum.map(miner_pk_hash_sk, fn {pk, hash_name, sk} ->
+        {:ok, _} = Mitbits.NodeSupervisor.add_node(pk, sk, genesis_block, hash_name)
+
+        {:ok} =
+          GenServer.call(Mitbits.Utility.string_to_atom("node_" <> hash_name), :update_wallet)
+
+        {hash_name}
       end)
 
-    nodes =
-      Enum.reduce(miner_node_pk_pid, %{}, fn {pk, pid}, nodes ->
-        Map.put_new(nodes, String.to_atom(pk), pid)
-      end)
+    # Enum.each(miner_node_hash, fn {hash} ->
+    #   IO.inspect(Mitbits.Node.get_balance(hash))
+    # end)
 
-    :ets.insert(:mitbits, {"nodes", nodes})
-
-    node_pk_pid =
+    node_hash =
       Enum.map(1..numNodes, fn _ ->
         {:ok, {sk, pk}} = RsaEx.generate_keypair()
-        {:ok, pid} = Mitbits.NodeSupervisor.add_node(pk, sk, genesis_block)
-        {:ok} = GenServer.call(pid, :update_wallet)
-        key = String.to_atom(first_miner_pk)
-        {:ok} = GenServer.call(pid, {:buy_bitcoins, nodes.key})
-        {pk, pid}
+        hash_name = Mitbits.Utility.getHash(pk)
+        {:ok, _} = Mitbits.NodeSupervisor.add_node(pk, sk, genesis_block, hash_name)
+
+        {:ok} =
+          GenServer.call(Mitbits.Utility.string_to_atom("node_" <> hash_name), :update_wallet)
+
+        {:ok} =
+          GenServer.call(
+            Mitbits.Utility.string_to_atom("node_" <> hash_name),
+            {:buy_bitcoins, first_miner_hash}
+          )
+
+        {hash_name}
       end)
 
-    nodes =
-      Enum.reduce(node_pk_pid, %{}, fn {pk, pid}, nodes ->
-        Map.put_new(nodes, String.to_atom(pk), pid)
-      end)
+    all_nodes = miner_node_hash ++ node_hash
+    :ets.insert(:mitbits, {"nodes", all_nodes})
 
-    :ets.insert(:mitbits, {"nodes", nodes})
+    # Mitbits.Utility.print_txns()
 
-    Mitbits.Utility.print_txns()
+    Mitbits.Miner.start_mining(first_miner_hash)
 
     {:noreply, {}}
   end

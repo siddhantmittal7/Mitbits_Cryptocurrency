@@ -9,7 +9,7 @@ defmodule Mitbits.MinerSupervisor do
     DynamicSupervisor.init(strategy: :one_for_one)
   end
 
-  def add_miner(pk, sk) do
-    {:ok, pid} = DynamicSupervisor.start_child(@me, {Mitbits.Miner, {pk, sk}})
+  def add_miner(pk, sk, hash_name) do
+    {:ok, pid} = DynamicSupervisor.start_child(@me, {Mitbits.Miner, {pk, sk, hash_name}})
   end
 end
