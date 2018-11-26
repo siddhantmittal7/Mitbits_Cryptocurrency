@@ -2,6 +2,7 @@ defmodule Mitbits.Utility do
   def add_txn(txn) do
     [{_, unchained_txn}] = :ets.lookup(:mitbits, "unchained_txn")
     updated_unchained_txns = unchained_txn ++ [txn]
+    # IO.inspect Enum.count updated_unchained_txns
     :ets.insert(:mitbits, {"unchained_txn", updated_unchained_txns})
     {:ok}
   end
@@ -22,7 +23,7 @@ defmodule Mitbits.Utility do
 
   def print_txns() do
     [{_, unchained_txn}] = :ets.lookup(:mitbits, "unchained_txn")
-    IO.inspect(unchained_txn)
+    IO.inspect(Enum.count(unchained_txn))
   end
 
   def getHash(string) do
