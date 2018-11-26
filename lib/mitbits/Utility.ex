@@ -16,11 +16,6 @@ defmodule Mitbits.Utility do
     to_string(txn_msg.from) <> to_string(txn_msg.to) <> to_string(txn_msg.amount)
   end
 
-  def print_txns() do
-    [{_, unchained_txn}] = :ets.lookup(:mitbits, "unchained_txn")
-    IO.inspect(Enum.count(unchained_txn))
-  end
-
   def getHash(string) do
     :crypto.hash(:sha, string) |> Base.encode16() |> String.downcase()
   end
