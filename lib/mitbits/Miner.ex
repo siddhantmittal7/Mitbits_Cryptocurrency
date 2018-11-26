@@ -24,7 +24,11 @@ defmodule Mitbits.Miner do
     # {:ok, valid} = RsaEx.verify(string, signature, pk
     # [{_, curr_unchained_txns}] = :ets.lookup(:mitbits, "unchained_txn")
 
-    updated_unchained_txns = %{signature: signature, message: string, timestamp: System.system_time()}
+    updated_unchained_txns = %{
+      signature: signature,
+      message: string,
+      timestamp: System.system_time()
+    }
 
     # :ets.insert(:mitbits, {"unchained_txn", updated_unchained_txns})
 
@@ -39,17 +43,15 @@ defmodule Mitbits.Miner do
       GenServer.call(Mitbits.Utility.string_to_atom("node_" <> my_hash), :get_txns)
 
     sorted_unchained_txns = Enum.sort_by(curr_unchained_txns, fn txn -> txn.timestamp end)
-    # IO.inspect(["lol", Enum.count(sorted_unchained_txns)])
-    # Mitbits.Utility.print_txns()
+
     size_of_txn_set = 5
 
     if Enum.count(sorted_unchained_txns) < size_of_txn_set do
-      # Process.sleep(1000)
       GenServer.cast(self(), :mine)
       {:noreply, {pk, sk}}
     else
       my_hash = Mitbits.Utility.getHash(pk)
-      {txn_set, remaining_unchained_txns} = Enum.split(sorted_unchained_txns, size_of_txn_set)
+      {txn_set, _} = Enum.split(sorted_unchained_txns, size_of_txn_set)
 
       reward_msg = %{from: "miner_" <> my_hash, to: "node_" <> my_hash, amount: 1000}
 
@@ -57,9 +59,6 @@ defmodule Mitbits.Miner do
         to_string(reward_msg.from) <> to_string(reward_msg.to) <> to_string(reward_msg.amount)
 
       {:ok, signature_of_reward_txn} = RsaEx.sign(str_reward_msg, sk)
-
-      str_signature_of_reward_txn =
-        signature_of_reward_txn |> Base.encode16() |> String.downcase()
 
       reward_txn = %{
         signature: signature_of_reward_txn,
@@ -101,16 +100,29 @@ defmodule Mitbits.Miner do
             {:delete_txns, txn_set}
           )
 
+        IO.inspect(
+          GenServer.call(
+            Mitbits.Utility.string_to_atom("node_" <> my_hash),
+            :get_indexed_blockchain
+          )
+        )
+
         # Send block to all
         [{_, all_nodes}] = :ets.lookup(:mitbits, "nodes")
 
         Enum.each(all_nodes, fn {hash} ->
-          IO.inspect(hash)
+          # IO.inspect(hash)
 
           {:ok} =
             GenServer.call(
               Mitbits.Utility.string_to_atom("node_" <> hash),
               {:rec_new_block, block}
+            )
+
+          {:ok} =
+            GenServer.call(
+              Mitbits.Utility.string_to_atom("node_" <> hash),
+              :add_latest_block_to_indexded_blockchain
             )
 
           {:ok} = GenServer.call(Mitbits.Utility.string_to_atom("node_" <> hash), :update_wallet)
@@ -157,7 +169,8 @@ defmodule Mitbits.Miner do
     nonce = Enum.random(1..100)
 
     new_block_hash = find_first_block_hash(hash_of_first_and_reward_txn, nonce)
-    IO.inspect new_block_hash
+    # IO.inspect(new_block_hash)
+
     block = %{
       hash: new_block_hash,
       txns: [first_txn, reward_txn],

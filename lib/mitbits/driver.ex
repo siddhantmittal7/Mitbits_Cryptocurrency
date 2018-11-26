@@ -29,26 +29,6 @@ defmodule Mitbits.Driver do
     {:noreply, {}}
   end
 
-  def make_transactions({acc, node_hash, miner_node_hash, miner_pk_hash_sk, numNodes, numMiners}) do
-    [{_, all_nodes}] = :ets.lookup(:mitbits, "nodes")
-
-    Enum.each(1..(acc * 2000), fn i ->
-      if(i == 10000) do
-        IO.puts("done")
-        # Mitbits.Utility.print_txns()
-      end
-
-      {node1_hash} = Enum.random(all_nodes)
-      {node2_hash} = Enum.random(all_nodes)
-      amount = 10
-
-      GenServer.cast(
-        Mitbits.Utility.string_to_atom("node_" <> node1_hash),
-        {:req_for_mitbits, amount, node2_hash}
-      )
-    end)
-  end
-
   def spawn_miners({numNodes, numMiners}) do
     miner_pk_hash_sk =
       Enum.map(1..numMiners, fn _ ->
@@ -88,6 +68,12 @@ defmodule Mitbits.Driver do
         {:ok} =
           GenServer.call(Mitbits.Utility.string_to_atom("node_" <> hash_name), :update_wallet)
 
+        {:ok} =
+          GenServer.call(
+            Mitbits.Utility.string_to_atom("node_" <> hash_name),
+            :add_latest_block_to_indexded_blockchain
+          )
+
         {hash_name}
       end)
 
@@ -105,8 +91,11 @@ defmodule Mitbits.Driver do
         if(hash_name != miner_node_hash) do
           {:ok, _} = Mitbits.NodeSupervisor.add_node(pk, sk, genesis_block, hash_name)
 
-          # {:ok} =
-          #   GenServer.call(Mitbits.Utility.string_to_atom("node_" <> hash_name), :update_wallet)
+          {:ok} =
+            GenServer.call(
+              Mitbits.Utility.string_to_atom("node_" <> hash_name),
+              :add_latest_block_to_indexded_blockchain
+            )
         end
 
         {hash_name}
@@ -118,10 +107,10 @@ defmodule Mitbits.Driver do
     :ets.insert(:mitbits, {"nodes", all_nodes})
 
     Enum.each(node_hash, fn {hash} ->
-        GenServer.cast(
-          Mitbits.Utility.string_to_atom("node_" <> first_miner_hash),
-          {:req_for_mitbits, 10, hash}
-        )
+      GenServer.cast(
+        Mitbits.Utility.string_to_atom("node_" <> first_miner_hash),
+        {:req_for_mitbits, 10, hash}
+      )
     end)
 
     {node_hash, miner_node_hash, miner_pk_hash_sk, numNodes, numMiners}
@@ -135,5 +124,24 @@ defmodule Mitbits.Driver do
       end)
 
     {acc, node_hash, miner_node_hash, miner_pk_hash_sk, numNodes, numMiners}
+  end
+
+  def make_transactions({acc, node_hash, miner_node_hash, miner_pk_hash_sk, numNodes, numMiners}) do
+    [{_, all_nodes}] = :ets.lookup(:mitbits, "nodes")
+
+    Enum.each(1..(acc * 2000), fn i ->
+      if(i == 10000) do
+        IO.puts("done")
+      end
+
+      {node1_hash} = Enum.random(all_nodes)
+      {node2_hash} = Enum.random(all_nodes)
+      amount = Enum.random(1..10)
+
+      GenServer.cast(
+        Mitbits.Utility.string_to_atom("node_" <> node1_hash),
+        {:req_for_mitbits, amount, node2_hash}
+      )
+    end)
   end
 end
