@@ -110,7 +110,7 @@ $ cd Mitbits_Cryptocurrency
 $ mix deps.get
 ```
 
-- For running all the test cases together run following commands, all the test cases will run in parallel. It will take around 4 minutes to run all the test cases. If a process terminates don't the supervisor will take care of it and respwan the terminates processes. To run individual process see next section
+- For running all the test cases together run following commands, all the test cases will run in parallel. It will take around 4 minutes to run all the test cases. If a process terminates don't worry the supervisor will take care of it and respwan the terminates processes. To run individual process see next section
 
 ```sh
 $ mix test
