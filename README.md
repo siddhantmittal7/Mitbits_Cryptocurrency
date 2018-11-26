@@ -7,54 +7,31 @@
 
 # Project Directory Structure
 ```
-├── chord
+├── Mitbits_Cryptocurrency
 │   ├── _build/
 │   ├── config/
 │   ├── lib
-│   │   └── chord
+│   │   └── mitbits
 │   │       ├── application.ex
 │   │       ├── driver.ex
-│   │       ├── node.ex
-│   │       ├── node_supervisor.ex
-│   │       └── stabilize.ex
+│   │       ├── Node.ex
+│   │       ├── NodeSupervisor.ex
+│   │       └── MinerSupervisor.ex
+│   │       └── Miner.ex
+│   │       └── Utility.ex
 │   ├── main.exs
 │   ├── mix.exs
 │   └── test/
-├── chord-bonus
-│   ├── _build/
-│   ├── config/
-│   ├── lib
-│   │   └── chord
-│   │       ├── application.ex
-│   │       ├── driver.ex
-│   │       ├── node.ex
-│   │       ├── node_supervisor.ex
-│   │       └── stabilize.ex
-│   ├── main.exs
-│   ├── mix.exs
-│   └── test/
-├── images
-│   └── Average Hops vs Numnodes.png
-├── Proj3.pdf
-├── Project 3 Bonus Report.docx
-├── Project 3 Bonus Report.pdf
+│   │   └── mitbits_test.exs
+│   │   └── test_helper.exs
 └── README.md
 ```
 
-# Instructions for running the code
-- After unziping the mittal_siddhant.zip  
-- All the program files are under the zip folder
-```sh
-$ make
-$ java keywordCounter input.txt
-```
-- Just copy the two input files in this directory and replace input.txt with the new input file name. Or just provide the correct path of the input file instead of input.txt
-
-# About 
+# About the project
 
 We have created a new crypto-currency named MitBits or MB using the blockchain principal. Decentralizing the money exachange process with no trust relying strongly on maths based proves of crytography, proof of work and irriversability.
 
-# Defining Application Architecture
+# Defining Application architecture
 - The Application consist of a supervisor which manages miner supervisor and node supervisor under it. This protects us application for getting terminated, as it restarts the application in such situation.
 - Miner supervisor and node supervisor hold beneath them miners and nodes genservers respectively. Why two different genservers for miners and nodes? This is because miners will be mining blocks asynchronous; competeting with each other to solve the puzzle of the block, this will slow down or maybe create a time out situations for the other processes like transactions, wallet updating etc.
 - Each node has a public key to identify them. Also each node also have private key(secret key) which is not accessable to other nodes.  
@@ -127,9 +104,54 @@ We have created a new crypto-currency named MitBits or MB using the blockchain p
 
 # How to test and run ExUnit tests 
 
+#### Run the following commands
+```sh
+$ cd Mitbits_Cryptocurrency
+$ mix deps.get
+```
+
+- For running all the test cases together run following commands, all the test cases will run in parallel. It will take around 4 minutes to run all the test cases. If a process terminates don't the supervisor will take care of it and respwan the terminates processes. To run individual process see next section
+
+```sh
+$ mix test
+```
 
 
+#### We have written 5 test cases to cover all the major functionality and scenarios 
 
+###### Test Case 1: Genesis block test
+- Expectation: This test case will print the genesis block(that is the first block) which will has a random string and a reward transaction of 1000 Mitbits to miner
+- To run it
+```sh
+$ mix test test/mitbits_test.exs:196
+```
+###### Test Case 2: Creating 10 participants public key, private key pairs using Elliptic-curve cryptography
+- Expectation: Creating public keys and private keys for each user node. This test case will print 10 private keys and public keys in following format [sk,pk]. Following that will be printed the sha256 hash of public keys of the nodes visible to all other nodes
+- To run it
+```sh
+$ mix test test/mitbits_test.exs:196
+```
+###### Test Case 3: Creating 10 digitally signed transaction between 10 participants when they join the system.
+- Expectation: This test case show the structure of the transactions, also since they are the first nodes to join the system hence as incentive 10 mitbits are awarded from first gensis miner. Note the signature will be different in all txn even they are signed with same private key proving the irreversibility of the txn. This is the signature made with the private key of the first miner.
+
+- To run it
+```sh
+$ mix test test/mitbits_test.exs:196
+```
+###### Test Case 4: Mining bitcoin and creating block chain
+- Expectation: Since mining is process creating a proof of work to approve transactions which takes computation power of each miner and all run async, this can be on-going process hence simulation is terminated after some time. Output is the mined blocks and after termination the blockchain.
+
+- To run it
+```sh
+$ mix test test/mitbits_test.exs:196
+```
+###### Test Case 5: Testing of wallet. We run a simulation between 20 user nodes and 5 miners. 10,000 random transactions are made between any two nodes.
+- Expectation: Terminated after some time the blockchain and updated wallets of each node is printed. The blockchain contains all the valid and authentic transaction. Updated wallet is testet and compared with the txn in block of thr blockchain
+ 
+- To run it
+```sh
+$ mix test test/mitbits_test.exs:196
+```
 
 
 
