@@ -1,5 +1,6 @@
 defmodule Mitbits.Driver do
   use GenServer
+  # use ExUnit.Case
   @me __MODULE__
 
   # API
@@ -25,6 +26,8 @@ defmodule Mitbits.Driver do
     |> spawn_nodes()
     |> start_mining()
     |> make_transactions()
+
+    #  assert 1+1 == 1
 
     {:noreply, {}}
   end
@@ -105,6 +108,7 @@ defmodule Mitbits.Driver do
 
     # IO.inspect(node_hash)
     :ets.insert(:mitbits, {"nodes", all_nodes})
+    IO.puts("bhenchod")
 
     Enum.each(node_hash, fn {hash} ->
       GenServer.cast(
@@ -144,4 +148,19 @@ defmodule Mitbits.Driver do
       )
     end)
   end
+
+  #  def test_transactions({acc, node_hash, miner_node_hash, miner_pk_hash_sk, numNodes, numMiners}) do
+  #    [{_, all_nodes}] = :ets.lookup(:mitbits, "nodes")
+  #
+  #    Enum.each(1..(acc * 5), fn i ->
+  #      if(i == 10000) do
+  #        IO.puts("done")
+  #      end
+  #
+  #      GenServer.cast(
+  #        Mitbits.Utility.string_to_atom("node_" <> node1_hash),
+  #        {:req_for_mitbits, amount, node2_hash}
+  #      )
+  #    end)
+  #  end
 end

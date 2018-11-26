@@ -218,10 +218,26 @@ defmodule Mitbits.Node do
   end
 
   def handle_call(
-  {:rec_new_block, new_block},
-  _from,
-  {pk, sk, blockchain, txn_list, balance, indexed_blockchain}
-  ) do
+        :get_blockchain,
+        _from,
+        {pk, sk, blockchain, txn_list, balance, indexed_blockchain}
+      ) do
+    {:reply, {blockchain}, {pk, sk, blockchain, txn_list, balance, indexed_blockchain}}
+  end
+
+  def handle_call(
+        :get_indexed_blockchain,
+        _from,
+        {pk, sk, blockchain, txn_list, balance, indexed_blockchain}
+      ) do
+    {:reply, indexed_blockchain, {pk, sk, blockchain, txn_list, balance, indexed_blockchain}}
+  end
+
+  def handle_call(
+        {:rec_new_block, new_block},
+        _from,
+        {pk, sk, blockchain, txn_list, balance, indexed_blockchain}
+      ) do
     updated_blockchain = blockchain ++ [new_block]
     {:reply, {:ok}, {pk, sk, updated_blockchain, txn_list, balance, indexed_blockchain}}
   end
@@ -272,4 +288,3 @@ defmodule Mitbits.Node do
     {:noreply, {pk, sk, blockchain, updated_txns, balance, indexed_blockchain}}
   end
 end
-

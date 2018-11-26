@@ -90,7 +90,7 @@ defmodule Mitbits.Miner do
           timestamp: System.system_time()
         }
 
-        # IO.inspect block
+        IO.inspect(block)
 
         # Delete txn_set from ets
         # :ets.insert(:mitbits, {"unchained_txn", remaining_unchained_txns})
@@ -100,12 +100,12 @@ defmodule Mitbits.Miner do
             {:delete_txns, txn_set}
           )
 
-        IO.inspect(
-          GenServer.call(
-            Mitbits.Utility.string_to_atom("node_" <> my_hash),
-            :get_indexed_blockchain
-          )
-        )
+        #        IO.inspect(
+        #          GenServer.call(
+        #            Mitbits.Utility.string_to_atom("node_" <> my_hash),
+        #            :get_indexed_blockchain
+        #          )
+        #        )
 
         # Send block to all
         [{_, all_nodes}] = :ets.lookup(:mitbits, "nodes")
@@ -147,7 +147,7 @@ defmodule Mitbits.Miner do
       str_signature_of_first_txn <> first_txn.message <> to_string(first_txn.timestamp)
 
     my_hash = Mitbits.Utility.getHash(pk)
-    reward_msg = %{from: "miner_" <> my_hash, to: "node_" <> my_hash, amount: 1000}
+    reward_msg = %{from: "miner_" <> my_hash, to: "node_" <> my_hash, amount: 100}
 
     str_reward_msg =
       to_string(reward_msg.from) <> to_string(reward_msg.to) <> to_string(reward_msg.amount)

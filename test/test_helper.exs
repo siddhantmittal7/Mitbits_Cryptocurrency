@@ -1,3 +1,2 @@
 ExUnit.start()
-#Mitbits.Application.start(:normal)
-
+# Mitbits.Application.start(:normal)
