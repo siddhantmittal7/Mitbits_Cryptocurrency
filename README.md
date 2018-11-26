@@ -54,7 +54,7 @@ $ java keywordCounter input.txt
 
 We have created a new crypto-currency named MitBits or MB using the blockchain principal. Decentralizing the money exachange process with no trust relying strongly on maths based proves of crytography, proof of work and irriversability.
 
-# Defining Application architecture
+# Defining Application Architecture
 - The Application consist of a supervisor which manages miner supervisor and node supervisor under it. This protects us application for getting terminated, as it restarts the application in such situation.
 - Miner supervisor and node supervisor hold beneath them miners and nodes genservers respectively. Why two different genservers for miners and nodes? This is because miners will be mining blocks asynchronous; competeting with each other to solve the puzzle of the block, this will slow down or maybe create a time out situations for the other processes like transactions, wallet updating etc.
 - Each node has a public key to identify them. Also each node also have private key(secret key) which is not accessable to other nodes.  
