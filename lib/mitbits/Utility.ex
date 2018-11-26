@@ -12,7 +12,7 @@ defmodule Mitbits.Utility do
     signature
   end
 
-  def verify(string, skey) do
+  def verify(string,signature, pk) do
     {:ok, valid} = RsaEx.verify(string, signature, pk)
     valid
   end
