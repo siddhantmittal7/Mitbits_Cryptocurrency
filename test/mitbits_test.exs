@@ -72,7 +72,7 @@ defmodule MitbitsTest do
     node_hash =
       Enum.map(1..numNodes, fn _ ->
         {:ok, {sk, pk}} = RsaEx.generate_keypair()
-        IO.inspect [sk,pk]
+        IO.inspect([sk, pk])
         hash_name = Mitbits.Utility.getHash(pk)
 
         if(hash_name != miner_node_hash) do
@@ -179,7 +179,6 @@ defmodule MitbitsTest do
     {node_hash, miner_node_hash, miner_pk_hash_sk, numNodes, numMiners}
   end
 
-
   def print({acc, node1_hash}) do
     if acc == 5 do
       IO.inspect(
@@ -242,7 +241,7 @@ defmodule MitbitsTest do
       |> spawn_miner_nodes()
       |> spawn_nodes_print()
 
-      IO.puts("sha256 hash of public keys")
+    IO.puts("sha256 hash of public keys")
     IO.inspect(node_hash)
     Process.sleep(100)
   end

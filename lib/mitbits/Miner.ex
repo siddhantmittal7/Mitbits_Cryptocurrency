@@ -1,6 +1,7 @@
 defmodule Mitbits.Miner do
   use GenServer, restart: :transient
-  @target "0000" <> "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+  # @target "0000" <> "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+  @target "000" <> "fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
   # @target "00" <> "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
 
   # API
@@ -20,29 +21,46 @@ defmodule Mitbits.Miner do
   end
 
   def handle_call({:mine_first, string}, _from, {pk, sk}) do
-    {:ok, signature} = RsaEx.sign(string, sk)
-    # {:ok, valid} = RsaEx.verify(string, signature, pk
-    # [{_, curr_unchained_txns}] = :ets.lookup(:mitbits, "unchained_txn")
+    signature = Mitbits.Utility.sign(string, sk)
 
-    updated_unchained_txns = %{
+    updated_unchained_txn = %{
       signature: signature,
       message: string,
       timestamp: System.system_time()
     }
 
-    # :ets.insert(:mitbits, {"unchained_txn", updated_unchained_txns})
-
-    {:reply, {mine_first(pk, sk, updated_unchained_txns)}, {pk, sk}}
+    {:reply, {mine_first(pk, sk, updated_unchained_txn)}, {pk, sk}}
   end
 
   def handle_cast(:mine, {pk, sk}) do
-    # [{_, curr_unchained_txns}] = :ets.lookup(:mitbits, "unchained_txn")
     my_hash = Mitbits.Utility.getHash(pk)
 
     {curr_unchained_txns} =
       GenServer.call(Mitbits.Utility.string_to_atom("node_" <> my_hash), :get_txns)
 
-    sorted_unchained_txns = Enum.sort_by(curr_unchained_txns, fn txn -> txn.timestamp end)
+    authenticated_txn_list =
+      Enum.reduce(curr_unchained_txns, [], fn txn, temp_list ->
+        from_pk = GenServer.call(Mitbits.Utility.string_to_atom(txn.message.from), :get_pk)
+        signature = txn.signature
+
+        string = Mitbits.Utility.txn_msg_to_string(txn.message)
+
+        indexed_blockchain =
+          GenServer.call(
+            Mitbits.Utility.string_to_atom("node_" <> my_hash),
+            :get_indexed_blockchain
+          )
+
+        from_hash = Mitbits.Utility.string_to_atom(txn.message.from)
+        balance_from_hash = Map.get(indexed_blockchain, from_hash)
+
+        if Mitbits.Utility.verify(string, signature, from_pk) == true &&
+             balance_from_hash >= txn.message.amount do
+          temp_list ++ [txn]
+        end
+      end)
+
+    sorted_unchained_txns = Enum.sort_by(authenticated_txn_list, fn txn -> txn.timestamp end)
 
     size_of_txn_set = 5
 
@@ -51,14 +69,14 @@ defmodule Mitbits.Miner do
       {:noreply, {pk, sk}}
     else
       my_hash = Mitbits.Utility.getHash(pk)
-      {txn_set, _} = Enum.split(sorted_unchained_txns, size_of_txn_set)
+      {txn_set, updated_unchained_txn_set} = Enum.split(sorted_unchained_txns, size_of_txn_set)
 
-      reward_msg = %{from: "miner_" <> my_hash, to: "node_" <> my_hash, amount: 1000}
+      reward_msg = %{from: "miner_" <> my_hash, to: "node_" <> my_hash, amount: 100}
 
       str_reward_msg =
         to_string(reward_msg.from) <> to_string(reward_msg.to) <> to_string(reward_msg.amount)
 
-      {:ok, signature_of_reward_txn} = RsaEx.sign(str_reward_msg, sk)
+      signature_of_reward_txn = Mitbits.Utility.sign(str_reward_msg, sk)
 
       reward_txn = %{
         signature: signature_of_reward_txn,
@@ -90,29 +108,23 @@ defmodule Mitbits.Miner do
           timestamp: System.system_time()
         }
 
-        IO.inspect(block)
-
-        # Delete txn_set from ets
-        # :ets.insert(:mitbits, {"unchained_txn", remaining_unchained_txns})
         {:ok} =
           GenServer.call(
             Mitbits.Utility.string_to_atom("node_" <> my_hash),
             {:delete_txns, txn_set}
           )
 
-        #        IO.inspect(
-        #          GenServer.call(
-        #            Mitbits.Utility.string_to_atom("node_" <> my_hash),
-        #            :get_indexed_blockchain
-        #          )
-        #        )
+        IO.inspect(
+          GenServer.call(
+            Mitbits.Utility.string_to_atom("node_" <> my_hash),
+            :get_indexed_blockchain
+          )
+        )
 
         # Send block to all
         [{_, all_nodes}] = :ets.lookup(:mitbits, "nodes")
 
         Enum.each(all_nodes, fn {hash} ->
-          # IO.inspect(hash)
-
           {:ok} =
             GenServer.call(
               Mitbits.Utility.string_to_atom("node_" <> hash),
@@ -135,24 +147,18 @@ defmodule Mitbits.Miner do
   end
 
   def mine_first(pk, sk, first_txn) do
-    # [{_, curr_unchained_txns}] = :ets.lookup(:mitbits, "unchained_txn")
-    # :ets.insert(:mitbits, {"unchained_txn", []})
-    # sorted_unchained_txns = Enum.sort_by(curr_unchained_txns, fn txn -> txn.timestamp end)
-
-    # [first_txn | _] = sorted_unchained_txns
-
     str_signature_of_first_txn = first_txn.signature |> Base.encode16() |> String.downcase()
 
     str_first_txn =
       str_signature_of_first_txn <> first_txn.message <> to_string(first_txn.timestamp)
 
     my_hash = Mitbits.Utility.getHash(pk)
-    reward_msg = %{from: "miner_" <> my_hash, to: "node_" <> my_hash, amount: 100}
+    reward_msg = %{from: "miner_" <> my_hash, to: "node_" <> my_hash, amount: 1000}
 
     str_reward_msg =
       to_string(reward_msg.from) <> to_string(reward_msg.to) <> to_string(reward_msg.amount)
 
-    {:ok, signature_of_reward_txn} = RsaEx.sign(str_reward_msg, sk)
+    signature_of_reward_txn = Mitbits.Utility.sign(str_reward_msg, sk)
     str_signature_of_reward_txn = signature_of_reward_txn |> Base.encode16() |> String.downcase()
 
     reward_txn = %{

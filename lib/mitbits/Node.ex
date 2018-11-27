@@ -25,6 +25,10 @@ defmodule Mitbits.Node do
     {:reply, indexed_blockchain, {pk, sk, blockchain, txn_list, balance, indexed_blockchain}}
   end
 
+  def handle_call(:get_pk, _from, {pk, sk, blockchain, txn_list, balance, indexed_blockchain}) do
+    {:reply, pk, {pk, sk, blockchain, txn_list, balance, indexed_blockchain}}
+  end
+
   def handle_call(
         :blockchain_list,
         _from,
@@ -59,33 +63,45 @@ defmodule Mitbits.Node do
           if(Kernel.is_map(txn.message) == true) do
             if(txn.message.from =~ "miner") do
               {_, map} =
-                Map.get_and_update(map, txn.message.to, fn current_value ->
-                  if(current_value == nil) do
-                    {current_value, txn.message.amount}
-                  else
-                    {current_value, current_value + txn.message.amount}
+                Map.get_and_update(
+                  map,
+                  Mitbits.Utility.string_to_atom(txn.message.to),
+                  fn current_value ->
+                    if(current_value == nil) do
+                      {current_value, txn.message.amount}
+                    else
+                      {current_value, current_value + txn.message.amount}
+                    end
                   end
-                end)
+                )
 
               map
             else
               {_, map} =
-                Map.get_and_update(map, txn.message.from, fn current_value ->
-                  if(current_value == nil) do
-                    {current_value, txn.message.amount}
-                  else
-                    {current_value, current_value - txn.message.amount}
+                Map.get_and_update(
+                  map,
+                  Mitbits.Utility.string_to_atom(txn.message.from),
+                  fn current_value ->
+                    if(current_value == nil) do
+                      {current_value, txn.message.amount}
+                    else
+                      {current_value, current_value - txn.message.amount}
+                    end
                   end
-                end)
+                )
 
               {_, map} =
-                Map.get_and_update(map, txn.message.to, fn current_value ->
-                  if(current_value == nil) do
-                    {current_value, txn.message.amount}
-                  else
-                    {current_value, current_value + txn.message.amount}
+                Map.get_and_update(
+                  map,
+                  Mitbits.Utility.string_to_atom(txn.message.to),
+                  fn current_value ->
+                    if(current_value == nil) do
+                      {current_value, txn.message.amount}
+                    else
+                      {current_value, current_value + txn.message.amount}
+                    end
                   end
-                end)
+                )
 
               map
             end
@@ -111,33 +127,45 @@ defmodule Mitbits.Node do
         if(Kernel.is_map(txn.message) == true) do
           if(txn.message.from =~ "miner") do
             {_, map} =
-              Map.get_and_update(map, txn.message.to, fn current_value ->
-                if(current_value == nil) do
-                  {current_value, txn.message.amount}
-                else
-                  {current_value, current_value + txn.message.amount}
+              Map.get_and_update(
+                map,
+                Mitbits.Utility.string_to_atom(txn.message.to),
+                fn current_value ->
+                  if(current_value == nil) do
+                    {current_value, txn.message.amount}
+                  else
+                    {current_value, current_value + txn.message.amount}
+                  end
                 end
-              end)
+              )
 
             map
           else
             {_, map} =
-              Map.get_and_update(map, txn.message.from, fn current_value ->
-                if(current_value == nil) do
-                  {current_value, txn.message.amount}
-                else
-                  {current_value, current_value - txn.message.amount}
+              Map.get_and_update(
+                map,
+                Mitbits.Utility.string_to_atom(txn.message.from),
+                fn current_value ->
+                  if(current_value == nil) do
+                    {current_value, txn.message.amount}
+                  else
+                    {current_value, current_value - txn.message.amount}
+                  end
                 end
-              end)
+              )
 
             {_, map} =
-              Map.get_and_update(map, txn.message.to, fn current_value ->
-                if(current_value == nil) do
-                  {current_value, txn.message.amount}
-                else
-                  {current_value, current_value + txn.message.amount}
+              Map.get_and_update(
+                map,
+                Mitbits.Utility.string_to_atom(txn.message.to),
+                fn current_value ->
+                  if(current_value == nil) do
+                    {current_value, txn.message.amount}
+                  else
+                    {current_value, current_value + txn.message.amount}
+                  end
                 end
-              end)
+              )
 
             map
           end
@@ -196,6 +224,15 @@ defmodule Mitbits.Node do
   end
 
   def handle_call(
+        {:update_txn_set, txns},
+        _from,
+        {pk, sk, blockchain, txn_list, balance, indexed_blockchain}
+      ) do
+    updated_txns = txns
+    {:reply, {:ok}, {pk, sk, blockchain, updated_txns, balance, indexed_blockchain}}
+  end
+
+  def handle_call(
         {:delete_txns, txn},
         _from,
         {pk, sk, blockchain, txn_list, balance, indexed_blockchain}
@@ -246,7 +283,7 @@ defmodule Mitbits.Node do
         {:req_for_mitbits, amount, req_hash},
         {pk, sk, blockchain, txn_list, balance, indexed_blockchain}
       ) do
-    if(balance > amount) do
+    if(balance >= amount) do
       txn_msg = %{
         amount: amount,
         from: "node_" <> Mitbits.Utility.getHash(pk),

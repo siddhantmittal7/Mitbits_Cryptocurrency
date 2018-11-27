@@ -108,7 +108,6 @@ defmodule Mitbits.Driver do
 
     # IO.inspect(node_hash)
     :ets.insert(:mitbits, {"nodes", all_nodes})
-    IO.puts("bhenchod")
 
     Enum.each(node_hash, fn {hash} ->
       GenServer.cast(
@@ -134,10 +133,6 @@ defmodule Mitbits.Driver do
     [{_, all_nodes}] = :ets.lookup(:mitbits, "nodes")
 
     Enum.each(1..(acc * 2000), fn i ->
-      if(i == 10000) do
-        IO.puts("done")
-      end
-
       {node1_hash} = Enum.random(all_nodes)
       {node2_hash} = Enum.random(all_nodes)
       amount = Enum.random(1..10)
@@ -148,19 +143,4 @@ defmodule Mitbits.Driver do
       )
     end)
   end
-
-  #  def test_transactions({acc, node_hash, miner_node_hash, miner_pk_hash_sk, numNodes, numMiners}) do
-  #    [{_, all_nodes}] = :ets.lookup(:mitbits, "nodes")
-  #
-  #    Enum.each(1..(acc * 5), fn i ->
-  #      if(i == 10000) do
-  #        IO.puts("done")
-  #      end
-  #
-  #      GenServer.cast(
-  #        Mitbits.Utility.string_to_atom("node_" <> node1_hash),
-  #        {:req_for_mitbits, amount, node2_hash}
-  #      )
-  #    end)
-  #  end
 end
