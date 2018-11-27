@@ -1,5 +1,5 @@
 # COP5615 – Fall 2018
-# Project 4.1
+# Project 4.1 MitBits (Money Inventory Transfer Bits)
 
 - Siddhant Mohan Mittal UFID: 6061-8545
 - Prafful Mehrotra UFID: 1099-5311
@@ -125,37 +125,43 @@ $ mix test
 - Expectation: This test case will print the genesis block (that is the first block) which will have a random string and a reward transaction of 1000 Mitbits to miner
 - To run it
 ```sh
-$ mix test test/mitbits_test.exs:196
+$ mix test --only test1
 ```
 ###### Test Case 2: Creating 10 participants public key, private key pairs using Elliptic-curve cryptography
 - Expectation: Creating public keys and private keys for each user node. This test case will print 10 private keys and public keys in following format [sk,pk]. Following that will be printed the sha256 hash of public keys of the nodes visible to all other nodes
 - To run it
 ```sh
-$ mix test test/mitbits_test.exs:196
+$ mix test --only test2
 ```
 ###### Test Case 3: Creating 10 digitally signed transaction between 10 participants when they join the system.
 - Expectation: This test case shows the structure of the transactions, also since they are the first nodes to join the system hence as incentive 10 mitbits are awarded from first genesis miner. Note the signature will be different in all txn even they are signed with same private key proving the irreversibility of the txn. This is the signature made with the private key of the first miner.
 
 - To run it
 ```sh
-$ mix test test/mitbits_test.exs:196
+$ mix test --only test3
 ```
 ###### Test Case 4: Mining bitcoin and creating block chain
 - Expectation: Since mining is process creating a proof of work to approve transactions which takes computation power of each miner and all run asynchronously, this can be on-going process hence simulation is terminated after some time. Output is the mined blocks and after termination the blockchain.
 
 - To run it
 ```sh
-$ mix test test/mitbits_test.exs:196
+$ mix test --only test4
 ```
 ###### Test Case 5: Testing of wallet. We run a simulation between 20 user nodes and 5 miners. 10,000 random transactions are made between any two nodes.
 - Expectation: Terminated after some time the blockchain and updated wallets of each node is printed. Updated wallet is tested and compared with the txn in block of the blockchain
  
 - To run it
 ```sh
-$ mix test test/mitbits_test.exs:196
+$ mix test --only test5
 ```
 
-
+###### Test Case 6: Authentication, Validation and Consensus Test. We run s simulation between 20 user nodes and 5 miners. 10k random transactions are made any two nodes. These transactions can be fraud ones where a user tries to add send more mitbits than he have in this account or miner include invalid transaction to create a fraud block.
+- Expectation: Terminated after some time as the process is infinite and we are just testing the functionality. The blockchain and updated wallets of each node is printed. The blockchain contains all the valid and authentic transactions. The wallet balance printed at the end shows no transaction with fraud and unrealistic amount. We created random transaction having amount as large as 100000, which we know won't be possible in less than <10k transactions as no node won't have such large balances in their wallets. Also note see the balances of no node goes in negative.
+ 
+- To run it
+```sh
+$ mix test --only test6
+```
 
 
 
