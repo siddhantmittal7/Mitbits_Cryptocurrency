@@ -148,7 +148,7 @@ $ mix test test/mitbits_test.exs:196
 $ mix test test/mitbits_test.exs:196
 ```
 ###### Test Case 5: Testing of wallet. We run a simulation between 20 user nodes and 5 miners. 10,000 random transactions are made between any two nodes.
-- Expectation: Terminated after some time the blockchain and updated wallets of each node is printed. The blockchain contains all the valid and authentic transaction. Updated wallet is testet and compared with the txn in block of the blockchain
+- Expectation: Terminated after some time the blockchain and updated wallets of each node is printed. Updated wallet is tested and compared with the txn in block of the blockchain
  
 - To run it
 ```sh
