@@ -192,7 +192,7 @@ defmodule Mitbits.Node do
         if(Kernel.is_map(txn.message) == true) do
           cond do
             txn.message.from == my_name ->
-              acc - txn.message.amount
+              acc
 
             txn.message.to == my_name ->
               acc + txn.message.amount
@@ -276,6 +276,8 @@ defmodule Mitbits.Node do
         {pk, sk, blockchain, txn_list, balance, indexed_blockchain}
       ) do
     updated_blockchain = blockchain ++ [new_block]
+
+    txn_list = txn_list -- new_block.txns
     {:reply, {:ok}, {pk, sk, updated_blockchain, txn_list, balance, indexed_blockchain}}
   end
 

@@ -179,6 +179,29 @@ defmodule MitbitsTest do
     {node_hash, miner_node_hash, miner_pk_hash_sk, numNodes, numMiners}
   end
 
+  def make_fraud_transactions(
+        {acc, node_hash, miner_node_hash, miner_pk_hash_sk, numNodes, numMiners}
+      ) do
+    [{_, all_nodes}] = :ets.lookup(:mitbits, "nodes")
+
+    Enum.each(1..(acc * 2000), fn i ->
+      if(i == 10000) do
+        IO.puts("done")
+      end
+
+      {node1_hash} = Enum.random(all_nodes)
+      {node2_hash} = Enum.random(all_nodes)
+      amount = Enum.random(1..100_000)
+
+      GenServer.cast(
+        Mitbits.Utility.string_to_atom("node_" <> node1_hash),
+        {:req_for_mitbits, amount, node2_hash}
+      )
+    end)
+
+    {node_hash, miner_node_hash, miner_pk_hash_sk, numNodes, numMiners}
+  end
+
   def print({acc, node1_hash}) do
     if acc == 5 do
       IO.inspect(
@@ -192,6 +215,7 @@ defmodule MitbitsTest do
     #      print({acc, node1_hash})
   end
 
+  @tag :test1
   test "First mine: Genesis Block test" do
     IO.puts(
       "####################################################################################################################################################"
@@ -217,6 +241,7 @@ defmodule MitbitsTest do
     Process.sleep(100)
   end
 
+  @tag :test2
   test "Creating public and private key" do
     IO.puts(
       "####################################################################################################################################################"
@@ -246,6 +271,7 @@ defmodule MitbitsTest do
     Process.sleep(100)
   end
 
+  @tag :test3
   test "Creating transaction" do
     IO.puts(
       "####################################################################################################################################################"
@@ -275,6 +301,7 @@ defmodule MitbitsTest do
     Process.sleep(100)
   end
 
+  @tag :test4
   test "Mining Bitcoins and creating block chain" do
     IO.puts(
       "####################################################################################################################################################"
@@ -310,6 +337,7 @@ defmodule MitbitsTest do
     IO.inspect(blockchain)
   end
 
+  @tag :test5
   @tag timeout: 200_000
   test "Wallet Testing" do
     IO.puts(
@@ -321,14 +349,14 @@ defmodule MitbitsTest do
     )
 
     IO.inspect(
-      "Expectation: Terminated after some time the blockchain and updated wallets of each node is printed. The blockchain contains all the valid and authentic transaction. Updated wallet is testet and compared with the txn in block of thr blockchain "
+      "Expectation: Terminated after some time the blockchain and updated wallets of each node is printed. Updated wallet is tested and compared with the txn in block of thr blockchain "
     )
 
-    numNodes = 10
+    numNodes = 20
     numMiners = 5
     :ets.new(:mitbits, [:set, :public, :named_table])
 
-    {node_hash, _, _, _, _} =
+    {_, _, _, _, _} =
       {numNodes, numMiners}
       |> spawn_miners()
       |> create_genesis_block()
@@ -339,13 +367,57 @@ defmodule MitbitsTest do
 
     Process.sleep(100_000)
 
-    {first} = Enum.at(node_hash, 0)
+#    {first} = Enum.at(node_hash, 0)
     IO.puts("**********************************************")
     IO.puts("Printing Wallets of each node")
 
-    indexed_blockchain =
-      GenServer.call(Mitbits.Utility.string_to_atom("node_" <> first), :get_indexed_blockchain)
+#    indexed_blockchain =
+#      GenServer.call(Mitbits.Utility.string_to_atom("node_" <> first), :get_indexed_blockchain)
 
-    IO.inspect(indexed_blockchain)
+#    IO.inspect(indexed_blockchain)
+
+    [{_, all_nodes}] = :ets.lookup(:mitbits, "nodes")
+    IO.inspect(Enum.count all_nodes)
+    Enum.each(all_nodes, fn {hash} ->
+      IO.inspect ([hash,Mitbits.Node.get_balance(hash)])
+    end)
+  end
+
+  @tag :test6
+  @tag timeout: 200_000
+  test "Authentication, Validation and Consensus Test" do
+    IO.puts(
+      "####################################################################################################################################################"
+    )
+
+    numNodes = 20
+    numMiners = 5
+    :ets.new(:mitbits, [:set, :public, :named_table])
+
+    {_, _, _, _, _} =
+      {numNodes, numMiners}
+      |> spawn_miners()
+      |> create_genesis_block()
+      |> spawn_miner_nodes()
+      |> spawn_nodes()
+      |> start_mining()
+      |> make_fraud_transactions()
+
+    Process.sleep(10_000)
+
+#    {first} = Enum.at(node_hash, 0)
+    IO.puts("**********************************************")
+    IO.puts("Printing Wallets of each node")
+
+#    indexed_blockchain =
+#      GenServer.call(Mitbits.Utility.string_to_atom("node_" <> first), :get_indexed_blockchain)
+
+    [{_, all_nodes}] = :ets.lookup(:mitbits, "nodes")
+    IO.inspect(Enum.count all_nodes)
+    Enum.each(all_nodes, fn {hash} ->
+      IO.inspect ([hash,Mitbits.Node.get_balance(hash)])
+    end)
+
+#    IO.inspect(indexed_blockchain)
   end
 end

@@ -3,15 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="db9fc697-c8a2-4a3b-b057-1b82c1de3269" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ExPrivateKey.pem" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/mitbits/Miner.ex" beforeDir="false" afterPath="$PROJECT_DIR$/lib/mitbits/Miner.ex" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/mitbits/Node.ex" beforeDir="false" afterPath="$PROJECT_DIR$/lib/mitbits/Node.ex" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/mitbits/Utility.ex" beforeDir="false" afterPath="$PROJECT_DIR$/lib/mitbits/Utility.ex" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/mitbits/driver.ex" beforeDir="false" afterPath="$PROJECT_DIR$/lib/mitbits/driver.ex" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.exs" beforeDir="false" afterPath="$PROJECT_DIR$/main.exs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mix.exs" beforeDir="false" afterPath="$PROJECT_DIR$/mix.exs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/mitbits_test.exs" beforeDir="false" afterPath="$PROJECT_DIR$/test/mitbits_test.exs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/test_helper.exs" beforeDir="false" afterPath="$PROJECT_DIR$/test/test_helper.exs" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -69,7 +63,8 @@
         <counts>
           <entry key="project.closed" value="1" />
           <entry key="project.open.time.0" value="1" />
-          <entry key="project.opened" value="1" />
+          <entry key="project.open.time.7" value="1" />
+          <entry key="project.opened" value="2" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -88,14 +83,14 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="ex" value="213" />
-          <entry key="exs" value="4231" />
+          <entry key="ex" value="370" />
+          <entry key="exs" value="5353" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Elixir Script" value="4231" />
-          <entry key="Elixir file" value="213" />
+          <entry key="Elixir Script" value="5353" />
+          <entry key="Elixir file" value="370" />
         </counts>
       </usages-collector>
     </session>
@@ -132,8 +127,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/lib/mitbits/Node.ex">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3712">
-              <caret line="257" column="62" selection-start-line="257" selection-start-column="60" selection-end-line="257" selection-end-column="62" />
+            <state relative-caret-position="-135">
+              <caret line="279" column="41" lean-forward="true" selection-start-line="279" selection-start-column="41" selection-end-line="279" selection-end-column="41" />
             </state>
           </provider>
         </entry>
@@ -141,7 +136,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/lib/mitbits/driver.ex">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="363">
+            <state relative-caret-position="305">
               <caret line="30" selection-start-line="18" selection-start-column="17" selection-end-line="30" />
             </state>
           </provider>
@@ -159,8 +154,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/test/mitbits_test.exs">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1775">
-              <caret line="312" lean-forward="true" selection-start-line="312" selection-end-line="312" />
+            <state relative-caret-position="-249">
+              <caret line="385" column="13" selection-start-line="385" selection-start-column="13" selection-end-line="385" selection-end-column="13" />
             </state>
           </provider>
         </entry>
@@ -177,8 +172,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/lib/mitbits/Miner.ex">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="721">
-              <caret line="159" column="26" selection-start-line="159" selection-start-column="26" selection-end-line="159" selection-end-column="26" />
+            <state relative-caret-position="99">
+              <caret line="112" column="14" selection-start-line="112" selection-start-column="10" selection-end-line="112" selection-end-column="14" />
             </state>
           </provider>
         </entry>
@@ -192,6 +187,11 @@
       </list>
     </option>
   </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>get</find>
+    </findStrings>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -204,10 +204,10 @@
         <option value="$PROJECT_DIR$/test/test_helper.exs" />
         <option value="$PROJECT_DIR$/mix.exs" />
         <option value="$PROJECT_DIR$/lib/mitbits/driver.ex" />
-        <option value="$PROJECT_DIR$/lib/mitbits/Node.ex" />
         <option value="$PROJECT_DIR$/lib/mitbits/application.ex" />
         <option value="$PROJECT_DIR$/main.exs" />
         <option value="$PROJECT_DIR$/lib/mitbits/Miner.ex" />
+        <option value="$PROJECT_DIR$/lib/mitbits/Node.ex" />
         <option value="$PROJECT_DIR$/test/mitbits_test.exs" />
       </list>
     </option>
@@ -223,46 +223,10 @@
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
-    <panes>
-      <pane id="PackagesPane" />
-      <pane id="Scope" />
-      <pane id="ProjectPane">
-        <subPane>
-          <expand>
-            <path>
-              <item name="Mitbits_Cryptocurrency" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Mitbits_Cryptocurrency" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Mitbits_Cryptocurrency" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Mitbits_Cryptocurrency" type="462c0819:PsiDirectoryNode" />
-              <item name="config" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Mitbits_Cryptocurrency" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Mitbits_Cryptocurrency" type="462c0819:PsiDirectoryNode" />
-              <item name="lib" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Mitbits_Cryptocurrency" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Mitbits_Cryptocurrency" type="462c0819:PsiDirectoryNode" />
-              <item name="lib" type="462c0819:PsiDirectoryNode" />
-              <item name="mitbits" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Mitbits_Cryptocurrency" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Mitbits_Cryptocurrency" type="462c0819:PsiDirectoryNode" />
-              <item name="test" type="462c0819:PsiDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
-      <pane id="AndroidView" />
-    </panes>
+    <panes />
   </component>
   <component name="PropertiesComponent">
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1543257163013" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1543265518390" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="configurable.group.appearance" />
   </component>
@@ -303,7 +267,7 @@
   <component name="ToolWindowManager">
     <frame x="21" y="23" width="1419" height="806" extended-state="0" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.25344953" />
+      <window_info content_ui="combo" id="Project" order="0" weight="0.25344953" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -317,7 +281,7 @@
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="7" visible="true" weight="0.46078432" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="7" visible="true" weight="0.49159664" />
       <window_info anchor="bottom" id="Event Log" order="8" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="9" />
       <window_info anchor="bottom" id="Messages" order="10" weight="0.32965517" />
@@ -331,7 +295,7 @@
       <window_info anchor="right" id="Maven Projects" order="7" />
     </layout>
     <layout-to-restore>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25344953" />
+      <window_info content_ui="combo" id="Project" order="0" weight="0.25344953" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -345,7 +309,7 @@
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Terminal" order="7" visible="true" weight="0.3347339" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="7" visible="true" weight="0.49159664" />
       <window_info anchor="bottom" id="Event Log" order="8" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="9" />
       <window_info anchor="bottom" id="Messages" order="10" weight="0.32965517" />
@@ -394,24 +358,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lib/mitbits/NodeSupervisor.ex">
+    <entry file="file://$PROJECT_DIR$/mix.exs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="195">
-          <caret line="13" column="33" selection-start-line="13" selection-start-column="33" selection-end-line="13" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/mitbits/Miner.ex">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="721">
-          <caret line="159" column="26" selection-start-line="159" selection-start-column="26" selection-end-line="159" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/mitbits/application.ex">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="7" column="6" selection-start-line="7" selection-start-column="6" selection-end-line="7" selection-end-column="6" />
+        <state relative-caret-position="210">
+          <caret line="14" column="20" selection-start-line="14" selection-start-column="20" selection-end-line="14" selection-end-column="20" />
         </state>
       </provider>
     </entry>
@@ -422,10 +372,24 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/mix.exs">
+    <entry file="file://$PROJECT_DIR$/lib/mitbits/application.ex">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="14" column="20" selection-start-line="14" selection-start-column="20" selection-end-line="14" selection-end-column="20" />
+        <state relative-caret-position="105">
+          <caret line="7" column="6" selection-start-line="7" selection-start-column="6" selection-end-line="7" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/mitbits/Miner.ex">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="99">
+          <caret line="112" column="14" selection-start-line="112" selection-start-column="10" selection-end-line="112" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/mitbits/NodeSupervisor.ex">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="13" column="33" selection-start-line="13" selection-start-column="33" selection-end-line="13" selection-end-column="33" />
         </state>
       </provider>
     </entry>
@@ -436,24 +400,24 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lib/mitbits/Node.ex">
+    <entry file="file://$PROJECT_DIR$/lib/mitbits/driver.ex">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3712">
-          <caret line="257" column="62" selection-start-line="257" selection-start-column="60" selection-end-line="257" selection-end-column="62" />
+        <state relative-caret-position="305">
+          <caret line="30" selection-start-line="18" selection-start-column="17" selection-end-line="30" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/lib/mitbits/driver.ex">
+    <entry file="file://$PROJECT_DIR$/lib/mitbits/Node.ex">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="363">
-          <caret line="30" selection-start-line="18" selection-start-column="17" selection-end-line="30" />
+        <state relative-caret-position="-135">
+          <caret line="279" column="41" lean-forward="true" selection-start-line="279" selection-start-column="41" selection-end-line="279" selection-end-column="41" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/test/mitbits_test.exs">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1775">
-          <caret line="312" lean-forward="true" selection-start-line="312" selection-end-line="312" />
+        <state relative-caret-position="-249">
+          <caret line="385" column="13" selection-start-line="385" selection-start-column="13" selection-end-line="385" selection-end-column="13" />
         </state>
       </provider>
     </entry>

@@ -57,10 +57,17 @@ defmodule Mitbits.Miner do
         if Mitbits.Utility.verify(string, signature, from_pk) == true &&
              balance_from_hash >= txn.message.amount do
           temp_list ++ [txn]
+        else
+        temp_list
         end
       end)
 
-    sorted_unchained_txns = Enum.sort_by(authenticated_txn_list, fn txn -> txn.timestamp end)
+    sorted_unchained_txns =
+      if (authenticated_txn_list != nil) do
+        Enum.sort_by(curr_unchained_txns, fn txn -> txn.timestamp end)
+      else
+        []
+      end
 
     size_of_txn_set = 5
 
@@ -114,12 +121,14 @@ defmodule Mitbits.Miner do
             {:delete_txns, txn_set}
           )
 
-        IO.inspect(
-          GenServer.call(
-            Mitbits.Utility.string_to_atom("node_" <> my_hash),
-            :get_indexed_blockchain
-          )
-        )
+          IO.inspect(block)
+
+#        IO.inspect(
+#          GenServer.call(
+#            Mitbits.Utility.string_to_atom("node_" <> my_hash),
+#            :get_indexed_blockchain
+#          )
+#        )
 
         # Send block to all
         [{_, all_nodes}] = :ets.lookup(:mitbits, "nodes")
