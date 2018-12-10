@@ -367,19 +367,20 @@ defmodule MitbitsTest do
 
     Process.sleep(100_000)
 
-#    {first} = Enum.at(node_hash, 0)
+    #    {first} = Enum.at(node_hash, 0)
     IO.puts("**********************************************")
     IO.puts("Printing Wallets of each node")
 
-#    indexed_blockchain =
-#      GenServer.call(Mitbits.Utility.string_to_atom("node_" <> first), :get_indexed_blockchain)
+    #    indexed_blockchain =
+    #      GenServer.call(Mitbits.Utility.string_to_atom("node_" <> first), :get_indexed_blockchain)
 
-#    IO.inspect(indexed_blockchain)
+    #    IO.inspect(indexed_blockchain)
 
     [{_, all_nodes}] = :ets.lookup(:mitbits, "nodes")
-    IO.inspect(Enum.count all_nodes)
+    IO.inspect(Enum.count(all_nodes))
+
     Enum.each(all_nodes, fn {hash} ->
-      IO.inspect ([hash,Mitbits.Node.get_balance(hash)])
+      IO.inspect([hash, Mitbits.Node.get_balance(hash)])
     end)
   end
 
@@ -405,19 +406,20 @@ defmodule MitbitsTest do
 
     Process.sleep(10_000)
 
-#    {first} = Enum.at(node_hash, 0)
+    #    {first} = Enum.at(node_hash, 0)
     IO.puts("**********************************************")
     IO.puts("Printing Wallets of each node")
 
-#    indexed_blockchain =
-#      GenServer.call(Mitbits.Utility.string_to_atom("node_" <> first), :get_indexed_blockchain)
+    #    indexed_blockchain =
+    #      GenServer.call(Mitbits.Utility.string_to_atom("node_" <> first), :get_indexed_blockchain)
 
     [{_, all_nodes}] = :ets.lookup(:mitbits, "nodes")
-    IO.inspect(Enum.count all_nodes)
+    IO.inspect(Enum.count(all_nodes))
+
     Enum.each(all_nodes, fn {hash} ->
-      IO.inspect ([hash,Mitbits.Node.get_balance(hash)])
+      IO.inspect([hash, Mitbits.Node.get_balance(hash)])
     end)
 
-#    IO.inspect(indexed_blockchain)
+    #    IO.inspect(indexed_blockchain)
   end
 end
